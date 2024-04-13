@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Wordle</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Wordle</h1>
+    <p class="guesscounter">Guesses Left: {{ guesses_left }}</p>
+
+    <div class="game-area">
+        {% for guess_feedback in guesses %}
+            <div class="guess-row">
+                {% for gf in guess_feedback %}
+                    <span class="guess-slot {{ gf.class }}">{{ gf.letter }}</span>
+                {% endfor %}
+            </div>
+        {% endfor %}
+        
+        {% for _ in range(empty_guesses) %}
+            <div class="guess-row">
+                {% for _ in range(5) %}
+                    <span class="guess-slot empty">&nbsp;</span>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="nongame-area">
+        {% if not session.game_over %}
+        <form method="post">
+            <input type="text" name="guess" autofocus="autofocus" maxlength="5" />
+            <input type="submit" value="Guess">
+        </form>
+        {% endif %}
+
+        <div class="error-message-container {{ 'hidden' if not error_message }}">
+            {% if error_message %}
+                <p class="error">{{ error_message }}</p>
+            {% endif %}
+        </div>
+
+        {% if game_over_message %}
+            <p class="gameover-message">{{ game_over_message }}</p>
+            <!-- Reset Button -->
+            <form action="/reset" method="post">
+                <input type="submit" value="Reset Game">
+            </form>
+        {% endif %}
+    </div>  
+</body>
+</html>
